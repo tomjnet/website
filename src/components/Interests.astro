@@ -1,0 +1,37 @@
+---
+// The reference's "Skills" bars, made personal (and honest about the chess).
+const left = [
+  ["Building software", 95],
+  ["AI / ML", 90],
+  ["Low-latency systems", 92],
+];
+const right = [
+  ["Chess tactics", 60],
+  ["Packing light for trips", 45],
+  ["Protein intake", 100],
+] as const;
+---
+
+<section class="container-site grid gap-10 border-b border-ink/10 py-16 lg:grid-cols-[1fr_2fr_2fr] lg:gap-16">
+  <div>
+    <p class="kicker">Skills</p>
+    <h2 class="heading-bold mt-4 text-2xl">Skills<br />that keep<br />me busy</h2>
+  </div>
+  {
+    [left, right].map((group) => (
+      <ul class="space-y-6">
+        {group.map(([label, value]) => (
+          <li>
+            <div class="flex justify-between text-[11px] font-bold uppercase tracking-[0.12em]">
+              <span>{label}</span>
+              <span class="text-ink/60">{value}%</span>
+            </div>
+            <div class="mt-2 h-[3px] bg-ink/10">
+              <div class="h-full bg-signal" style={`width:${value}%`} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    ))
+  }
+</section>

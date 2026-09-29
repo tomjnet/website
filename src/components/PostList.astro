@@ -1,0 +1,84 @@
+---
+// Posts are fetched in the browser from the posts repo, so new posts appear without a rebuild.
+interface Props {
+  /** Max posts to show; omit for all. */
+  limit?: number;
+  /** Show tag filter chips. */
+  filters?: boolean;
+  /** "grid": colored tiles (home). "list": numbered rows (posts page). */
+  variant?: "grid" | "list";
+}
+const { limit, filters = false, variant = "list" } = Astro.props;
+---
+
+<post-list data-limit={limit} data-filters={filters ? "true" : undefined} data-variant={variant}>
+  {filters && <div data-filters class="mb-8 flex flex-wrap gap-6" role="group" aria-label="Filter by tag"></div>}
+  <p data-status class="py-10 text-sm text-ink/60" role="status">Loading posts…</p>
+  <ul
+    data-list
+    class={variant === "grid" ? "grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4" : "border-t-2 border-ink"}
+  >
+  </ul>
+</post-list>
+
+<script>
+  import { loadIndex, postCardHtml, postRowHtml, placeholderHtml, escapeHtml, type PostEntry } from "../scripts/posts";
+
+  class PostList extends HTMLElement {
+    posts: PostEntry[] = [];
+    tag = "";
+
+    async connectedCallback() {
+      const status = this.querySelector<HTMLElement>("[data-status]")!;
+      try {
+        const limit = Number(this.dataset.limit) || undefined;
+        this.posts = (await loadIndex()).slice(0, limit);
+        this.tag = new URLSearchParams(location.search).get("tag") ?? "";
+        if (this.dataset.filters) this.renderFilters();
+        this.renderList();
+      } catch (err) {
+        console.error(err);
+        status.textContent = "Couldn't load posts right now. Please try again later.";
+      }
+    }
+
+    renderFilters() {
+      const box = this.querySelector<HTMLElement>("[data-filters]")!;
+      const tags = [...new Set(this.posts.flatMap((p) => p.tags))].sort();
+      if (!tags.length) return;
+      const chip = (t: string, label: string) =>
+        `<button type="button" data-tag="${escapeHtml(t)}" aria-pressed="${this.tag === t}"
+          class="border-b-2 border-transparent pb-1 text-[11px] font-bold uppercase tracking-[0.12em] transition hover:border-ink aria-pressed:border-signal aria-pressed:text-signal">${escapeHtml(label)}</button>`;
+      box.innerHTML = chip("", "All") + tags.map((t) => chip(t, t)).join("");
+      box.addEventListener("click", (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-tag]");
+        if (!btn) return;
+        this.tag = btn.dataset.tag ?? "";
+        const u = new URL(location.href);
+        if (this.tag) u.searchParams.set("tag", this.tag);
+        else u.searchParams.delete("tag");
+        history.replaceState(null, "", u);
+        box.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tag === this.tag)));
+        this.renderList();
+      });
+    }
+
+    renderList() {
+      const status = this.querySelector<HTMLElement>("[data-status]")!;
+      const list = this.querySelector<HTMLElement>("[data-list]")!;
+      const shown = this.tag ? this.posts.filter((p) => p.tags.includes(this.tag)) : this.posts;
+      const render = this.dataset.variant === "grid" ? postCardHtml : postRowHtml;
+      list.innerHTML = shown.map(render).join("");
+      // Keep the home grid full while there are fewer posts than slots.
+      const slots = Number(this.dataset.limit) || 0;
+      if (this.dataset.variant === "grid" && shown.length && shown.length < slots) {
+        // One "in progress" tile is enough; more would look padded.
+        list.innerHTML += placeholderHtml(shown.length);
+      }
+      status.textContent = shown.length ? "" : "No posts yet — check back soon.";
+      status.hidden = shown.length > 0;
+    }
+  }
+
+  customElements.define("post-list", PostList);
+</script>

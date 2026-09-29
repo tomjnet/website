@@ -1,0 +1,20 @@
+---
+// Hand-painted red brush stroke under headlines.
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<svg class:list={["pointer-events-none text-signal", className]} viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <filter id="brush-rough" x="-5%" y="-40%" width="110%" height="180%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035 0.6" numOctaves="3" seed="7"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" scale="9"></feDisplacementMap>
+    </filter>
+  </defs>
+  <g filter="url(#brush-rough)" fill="currentColor">
+    <path d="M8 38 C120 20 300 14 590 10 L594 22 C400 30 200 40 14 52 Z"></path>
+    <path d="M40 46 C200 34 380 28 560 26 L562 32 C380 38 200 46 44 54 Z" opacity="0.7"></path>
+  </g>
+</svg>

@@ -1,0 +1,40 @@
+---
+// Research is fetched in the browser from the content repo, like posts, so new papers appear without a rebuild.
+interface Props {
+  /** Max items to show; omit for all. */
+  limit?: number;
+}
+const { limit } = Astro.props;
+---
+
+<research-list data-limit={limit}>
+  <p data-status class="py-10 text-sm text-ink/60" role="status">Loading research…</p>
+  <ul data-list class="border-t-2 border-ink" hidden></ul>
+</research-list>
+
+<script>
+  import { loadResearch, researchRowHtml } from "../scripts/posts";
+
+  class ResearchList extends HTMLElement {
+    async connectedCallback() {
+      const status = this.querySelector<HTMLElement>("[data-status]")!;
+      const list = this.querySelector<HTMLElement>("[data-list]")!;
+      try {
+        const limit = Number(this.dataset.limit) || undefined;
+        const items = (await loadResearch()).slice(0, limit);
+        if (!items.length) {
+          status.textContent = "No research yet — check back soon.";
+          return;
+        }
+        list.innerHTML = items.map(researchRowHtml).join("");
+        list.hidden = false;
+        status.hidden = true;
+      } catch (err) {
+        console.error(err);
+        status.textContent = "Couldn't load research right now. Please try again later.";
+      }
+    }
+  }
+
+  customElements.define("research-list", ResearchList);
+</script>

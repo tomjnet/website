@@ -1,0 +1,50 @@
+---
+import { getCollection, render } from "astro:content";
+import Page from "../layouts/Page.astro";
+import { url } from "../data/site";
+
+const items = (await getCollection("hobbies")).sort((a, b) => a.data.order - b.data.order);
+const entries = await Promise.all(items.map(async (item) => ({ item, Content: (await render(item)).Content })));
+
+// Same rhythm as the home tiles: ink, signal red, mist.
+const tone = ["bg-ink text-paper", "bg-signal text-paper", "bg-mist text-ink"];
+const glyph: Record<string, string> = { Chess: "♞", Reading: "¶", Travel: "✈" };
+---
+
+<Page title="Hobbies" kicker="Off the keyboard" intro="Away from the keyboard: chess, travel, and a steady stack of books.">
+  <ul class="grid gap-x-5 gap-y-10 md:grid-cols-3">
+    {
+      entries.map(({ item, Content }, i) => (
+        <li>
+          <div class={`relative aspect-[4/5] overflow-hidden ${tone[i % tone.length]}`}>
+            {item.data.video ? (
+              <video
+                class="absolute inset-0 h-full w-full object-cover"
+                src={url(item.data.video)}
+                poster={url("/videos/hero-poster.jpg")}
+                autoplay
+                loop
+                muted
+                playsinline
+                preload="metadata"
+                aria-hidden="true"
+              />
+            ) : item.data.image ? (
+              <img class="absolute inset-0 h-full w-full object-cover" src={url(item.data.image)} alt="" loading="lazy" />
+            ) : (
+              <span class="absolute inset-0 flex select-none items-center justify-center text-[200px] leading-none" aria-hidden="true">
+                {glyph[item.data.title] ?? item.data.title.charAt(0)}
+              </span>
+            )}
+            <span class="absolute left-5 top-5 font-display text-2xl">{String(i + 1).padStart(2, "0")}</span>
+          </div>
+          <h2 class="heading-bold mt-5 text-xl">{item.data.title}</h2>
+          <p class="mt-2 text-sm leading-relaxed text-ink/70">{item.data.summary}</p>
+          <div class="prose prose-sm mt-2 max-w-none empty:hidden prose-a:text-signal">
+            <Content />
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</Page>

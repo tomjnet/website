@@ -1,0 +1,45 @@
+---
+import Arrow from "./Arrow.astro";
+import { site, url } from "../data/site";
+
+const elsewhere = [
+  { label: "X / Twitter", href: site.social.x },
+  { label: "GitHub", href: site.social.github },
+  { label: "LinkedIn", href: site.social.linkedin },
+];
+---
+
+<footer class="bg-ink text-paper">
+  <div class="container-site grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
+    <div>
+      <a href={url("/")} class="flex items-center gap-1.5 text-2xl font-extrabold uppercase tracking-tight">
+        {site.logo}<span class="h-2.5 w-2.5 rounded-full bg-signal"></span>
+      </a>
+      <p class="mt-4 max-w-xs text-sm leading-relaxed text-paper/70">{site.intro}</p>
+    </div>
+    <nav aria-label="Footer">
+      <p class="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">Navigation</p>
+      <ul class="space-y-2 text-sm text-paper/70">
+        {site.nav.map((item) => <li><a href={url(item.href)} class="transition hover:text-signal">{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <div>
+      <p class="mb-4 text-[11px] font-bold uppercase tracking-[0.14em]">Elsewhere</p>
+      <ul class="space-y-2 text-sm text-paper/70">
+        {
+          elsewhere.map((l) => (
+            <li>
+              <a href={l.href} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 transition hover:text-signal">
+                {l.label} <Arrow size={11} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="container-site flex justify-between border-t border-white/10 py-5 text-xs text-paper/50">
+    <span>© {new Date().getFullYear()} {site.name}. Built with Astro.</span>
+    <a href="#top" class="hover:text-signal">Back to top ↑</a>
+  </div>
+</footer>

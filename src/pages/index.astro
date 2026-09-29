@@ -1,0 +1,62 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import About from "../components/About.astro";
+import WhatIDo from "../components/WhatIDo.astro";
+import Interests from "../components/Interests.astro";
+import PostList from "../components/PostList.astro";
+import ResearchList from "../components/ResearchList.astro";
+import Cta from "../components/Cta.astro";
+import Footer from "../components/Footer.astro";
+import Arrow from "../components/Arrow.astro";
+import { site, url } from "../data/site";
+---
+
+<Base>
+  <div id="top"></div>
+  <main>
+    <Hero />
+    <About />
+    <WhatIDo />
+    <Interests />
+
+    <section class="container-site py-16">
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <p class="kicker">Latest writing</p>
+        <a href={url("/posts/")} class="inline-flex items-center gap-2 border-b-2 border-signal pb-0.5 text-[11px] font-bold uppercase tracking-[0.12em] hover:text-signal">
+          All posts <Arrow size={11} />
+        </a>
+      </div>
+      <PostList limit={4} variant="grid" />
+    </section>
+
+    <section class="container-site pb-16">
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <p class="kicker">Research</p>
+        <a href={url("/research/")} class="inline-flex items-center gap-2 border-b-2 border-signal pb-0.5 text-[11px] font-bold uppercase tracking-[0.12em] hover:text-signal">
+          All research <Arrow size={11} />
+        </a>
+      </div>
+      <ResearchList limit={3} />
+    </section>
+
+    <!-- A line from a post, in the reference's testimonial style -->
+    <section class="container-site pb-20">
+      <p class="kicker">From the blog</p>
+      <figure class="mt-6 grid gap-6 bg-mist p-8 sm:p-12 lg:grid-cols-[auto_1fr] lg:gap-10">
+        <span class="font-display text-7xl leading-none text-signal" aria-hidden="true">“</span>
+        <div>
+          <blockquote class="heading-bold text-2xl sm:text-4xl">{site.featured.quote}</blockquote>
+          <figcaption class="mt-6 text-sm">
+            <a href={`${url("/posts/view/")}?p=${encodeURIComponent(site.featured.slug)}`} class="inline-flex items-center gap-2 font-bold hover:text-signal">
+              {site.featured.title} <Arrow size={12} />
+            </a>
+          </figcaption>
+        </div>
+      </figure>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</Base>

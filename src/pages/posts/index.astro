@@ -1,0 +1,12 @@
+---
+import Page from "../../layouts/Page.astro";
+import PostList from "../../components/PostList.astro";
+---
+
+<Page
+  title="Posts"
+  kicker="Writing"
+  intro="Essays and notes on software, markets and systems. New posts show up here as soon as they're published."
+>
+  <PostList filters variant="list" />
+</Page>

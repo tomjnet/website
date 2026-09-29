@@ -1,0 +1,41 @@
+---
+import Base from "./Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import Brush from "../components/Brush.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Big page heading; defaults to the title. */
+  heading?: string;
+  /** Section label above the heading, e.g. "Writing". */
+  kicker?: string;
+  intro?: string;
+}
+
+const { title, description, heading = title, kicker, intro } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div id="top"></div>
+  <Header />
+  <main>
+    <div class="container-site grid gap-8 pb-12 pt-14 sm:pt-20 lg:grid-cols-[1fr_360px] lg:items-end">
+      <div>
+        {kicker && <p class="kicker mb-5">{kicker}</p>}
+        <h1 class="relative w-fit font-display text-[72px] uppercase leading-[0.9] sm:text-[112px] lg:text-[140px]">
+          {heading}<span class="text-signal">.</span>
+          <Brush class="absolute -bottom-5 left-[25%] h-8 w-[75%] sm:h-10" />
+        </h1>
+      </div>
+      {intro && <p class="max-w-sm text-sm leading-relaxed text-ink/70">{intro}</p>}
+    </div>
+    <div class="container-site pb-20">
+      <slot />
+    </div>
+    <Cta />
+  </main>
+  <Footer />
+</Base>

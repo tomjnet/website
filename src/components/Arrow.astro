@@ -1,0 +1,19 @@
+---
+// The ↗ arrow used throughout the design.
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 14, class: className = "" } = Astro.props;
+---
+
+<svg
+  class:list={["shrink-0", className]}
+  width={size}
+  height={size}
+  viewBox="0 0 16 16"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"></path></svg
+>

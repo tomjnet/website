@@ -1,0 +1,29 @@
+---
+import Arrow from "./Arrow.astro";
+import { site } from "../data/site";
+---
+
+<section class="relative overflow-hidden bg-mist">
+  <!-- Red paint splash, like the reference's corner brush -->
+  <svg class="pointer-events-none absolute -right-10 -top-10 h-[140%] w-64 text-signal sm:w-80" viewBox="0 0 200 300" aria-hidden="true">
+    <defs>
+      <filter id="splash-rough">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="3"></feTurbulence>
+        <feDisplacementMap in="SourceGraphic" scale="28"></feDisplacementMap>
+      </filter>
+    </defs>
+    <path filter="url(#splash-rough)" fill="currentColor" d="M200 0 L200 300 L150 300 C170 220 90 200 130 140 C160 90 80 60 120 0 Z"></path>
+  </svg>
+
+  <div class="container-site relative grid gap-8 py-16 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:py-20">
+    <h2 class="font-display text-[48px] uppercase leading-[0.95] sm:text-[72px]">
+      Let's talk about something<br /><span class="text-signal">interesting</span>.
+    </h2>
+    <div class="relative max-w-sm">
+      <p class="text-sm leading-relaxed text-ink/70">
+        A question about a post, a paper, a chess opening or a city I should visit? I'd love to hear it.
+      </p>
+      <a href={site.social.x} target="_blank" rel="noopener noreferrer" class="btn-ink mt-6">Get in touch <Arrow size={12} /></a>
+    </div>
+  </div>
+</section>
